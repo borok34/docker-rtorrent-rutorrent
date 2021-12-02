@@ -78,6 +78,18 @@ FROM crazymax/alpine-s6:${ALPINE_S6_TAG} AS builder
 RUN apk --update --no-cache add \
     autoconf \
     automake \
+    cppunit-dev \
+    curl-dev \
+    file \
+    subversion \
+    make \
+    perl-dev \
+    file \
+    g++ \
+    go \
+    wget \
+    gcc \
+    libressl-dev \
     binutils \
     brotli-dev \
     build-base \
@@ -86,17 +98,22 @@ RUN apk --update --no-cache add \
     geoip-dev \
     libtool \
     libxslt-dev \
+    libressl-dev \
+    libffi-dev \
     linux-headers \
+    musl-dev \
     ncurses-dev \
     nghttp2-dev \
     openssl-dev \
     pcre-dev \
     php7-dev \
     php7-pear \
+    python3-dev \
     tar \
     tree \
     xz \
     zlib-dev
+
 
 ENV DIST_PATH="/dist"
 COPY --from=download /dist /tmp
@@ -246,6 +263,12 @@ RUN apk --update --no-cache add \
     grep \
     gzip \
     libstdc++ \
+    irssi \
+    irssi-perl \
+    libxml2-dev \
+    perl-archive-zip \
+    perl-net-ssleay \
+    perl-digest-sha1 \
     mediainfo \
     ncurses \
     openssl \
@@ -286,6 +309,10 @@ RUN apk --update --no-cache add \
   && adduser -D -H -u ${PUID} -G rtorrent -s /bin/sh rtorrent \
   && curl --version \
   && rm -rf /tmp/* /var/cache/apk/*
+
+RUN perl -MCPAN -e 'my $c = "CPAN::HandleConfig"; $c->load(doit => 1, autoconfig => 1); $c->edit(prerequisites_policy => "follow"); $c->edit(build_requires_install_policy => "yes"); $c->commit' && \
+ curl -L http://cpanmin.us | perl - App::cpanminus && \
+        cpanm HTML::Entities XML::LibXML JSON JSON::XS
 
 COPY rootfs /
 
